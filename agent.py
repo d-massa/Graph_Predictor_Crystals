@@ -1,5 +1,5 @@
 from torch_geometric.data import DataLoader
-from models import GCN, GNN_SAGE
+from models import GCN, GNN_SAGE, GATv2
 import tqdm
 import torch
 import wandb
@@ -21,12 +21,20 @@ def agent_fn():
 
     if wandb.config.model == "GCN": 
         model = GCN(hidden_channels = wandb.config.hidden_channels,
-                    num_layers=wandb.config.num_layers)
+                    num_layers=wandb.config.num_layers,
+                    drop_p=0.2)
     elif wandb.config.model == "GNN_SAGE":
         model = GNN_SAGE(hidden_channels = wandb.config.hidden_channels,
                          num_layers=wandb.config.num_layers,
+                         drop_p=0.2,
                          aggr=wandb.config.get("aggr", "mean"),  # defaults to 'mean'
                          aggr_kwargs=wandb.config.get("aggr_kwargs", None))
+    elif wandb.config.model == "GATv2":
+        model = GATv2(hidden_channels = wandb.config.hidden_channels,
+                         num_layers=wandb.config.num_layers,
+                         heads=wandb.config.heads,
+                         drop_p=0.2
+        )
     else: 
         ValueError("UNKOWN")
 
